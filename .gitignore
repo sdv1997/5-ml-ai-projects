@@ -1,0 +1,17 @@
+# Datasets (descargar manualmente de DrivenData)
+data/
+*.csv
+
+# Permitir submissions (resultados, no datos crudos)
+!day_*/submissions/*.csv
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+.claude/
