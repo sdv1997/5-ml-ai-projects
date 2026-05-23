@@ -11,14 +11,25 @@
 
 | Día | Tema | Resultado | Notas |
 |---|---|---|---|
-| [01](day_01/) | Richter's Predictor (DrivenData) | **F1 0.7510, rank 280 / ~8.800 (top 3.2%)** | EDA + baselines + ensemble LightGBM/CatBoost + feature engineering. Iteraciones documentadas, incluido un experimento negativo. |
+| [01](day_01/) | [Richter's Predictor](https://www.drivendata.org/competitions/57/nepal-earthquake/) (DrivenData) | **F1 0.7534 público, rank 55 / ~8.800 (top 0.6%)** | Ensemble LightGBM + CatBoost con feature engineering. 5 iteraciones documentadas (4 positivas, 1 negativa). [Leaderboard](https://www.drivendata.org/competitions/57/nepal-earthquake/leaderboard/?page=1). |
 | 02 | _por decidir_ | — | — |
 
 _Se actualiza cada día._
 
 ## Estructura
 
-Cada día tiene su propia carpeta `day_XX/` con scripts, README explicando qué se hizo, y outputs (plots, logs). Datos crudos no se versionan — cada README indica cómo obtenerlos.
+Cada día tiene su propia carpeta `day_XX/` con scripts, README explicando qué se hizo, y outputs (plots). Datos crudos no se versionan — cada README indica cómo obtenerlos.
+
+```
+.
+├── README.md                     # este fichero
+├── data/                         # CSVs descargados, gitignored
+└── day_01/
+    ├── README.md                 # historia completa del día 1
+    ├── day01.py                  # baseline + EDA + plot
+    ├── pipeline.py               # modelo ganador (F1 0.7534)
+    └── class_distribution.png    # plot de distribución del target
+```
 
 ## Stack
 
