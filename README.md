@@ -2,6 +2,10 @@
 
 30 días seguidos construyendo algo distinto cada día relacionado con ML / IA. Sigo el progreso en X.
 
+## Hardware
+
+El **Día 1 corrió enteramente en CPU** (LightGBM + CatBoost sobre 260k filas, sin entrenar nada que necesitase GPU). Para los próximos días, según lo que pida cada problema, puede que alquile GPU puntualmente en cloud (Colab, runpod, vast.ai). Lo indico en el README de cada día.
+
 ## Tabla de progreso
 
 | Día | Tema | Resultado | Notas |
