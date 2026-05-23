@@ -2,8 +2,7 @@
 data/
 *.csv
 
-# Permitir submissions (resultados, no datos crudos)
-!day_*/submissions/*.csv
+# Submissions también fuera del repo — se regeneran corriendo los scripts.
 
 # Python
 __pycache__/
