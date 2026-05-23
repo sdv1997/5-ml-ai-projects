@@ -1,11 +1,6 @@
 # 30 días de IA
 
-30 días seguidos construyendo algo distinto cada día relacionado con ML / IA. Sin GPU, todo en CPU. Sigo el progreso en Twitter.
-
-> **Restricciones autoimpuestas:**
-> - ~1 hora de trabajo por día.
-> - CPU only — sin GPU, sin nube, sin alquilar máquinas.
-> - Cada día queda público en este repo + un tweet con el resultado.
+30 días seguidos construyendo algo distinto cada día relacionado con ML / IA. Sigo el progreso en X.
 
 ## Tabla de progreso
 
@@ -35,6 +30,6 @@ Cada día tiene su propia carpeta `day_XX/` con scripts, README explicando qué 
 
 Lo que voy usando según el día: Python 3.12, pandas, NumPy, scikit-learn, LightGBM, CatBoost, PyTorch (cuando toque NN pequeños), matplotlib. Sin frameworks pesados.
 
-## Sígueme en Twitter
+## Sígueme en X
 
 Postero el progreso cada día. _(link al perfil)_
