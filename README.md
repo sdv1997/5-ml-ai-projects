@@ -4,14 +4,14 @@
 
 ## Hardware
 
-El **Día 1 corrió enteramente en CPU** (LightGBM + CatBoost sobre 260k filas, sin entrenar nada que necesitase GPU). Para los próximos días, según lo que pida cada problema, puede que alquile GPU puntualmente en cloud (Colab, runpod, vast.ai). Lo indico en el README de cada día.
+Día 1 corrió en CPU. A partir del Día 2, GPU en RunPod community cloud (RTX A5000). Lo indico en el README de cada día.
 
 ## Tabla de progreso
 
 | Día | Tema | Resultado | Notas |
 |---|---|---|---|
-| [01](day_01/) | [Richter's Predictor](https://www.drivendata.org/competitions/57/nepal-earthquake/) (DrivenData) | **F1 0.7534 público, rank 55 / ~8.800 (top 0.6%)** | Ensemble LightGBM + CatBoost con feature engineering. 5 iteraciones documentadas (4 positivas, 1 negativa). [Leaderboard](https://www.drivendata.org/competitions/57/nepal-earthquake/leaderboard/?page=1). |
-| 02 | _por decidir_ | — | — |
+| [01](day_01/) | [Richter's Predictor](https://www.drivendata.org/competitions/57/nepal-earthquake/) (DrivenData) | **F1 0.7534 público, rank 55 / ~8.800 (top 0.6%)** | Ensemble LightGBM + CatBoost con feature engineering. CPU. |
+| [02](day_02/) | [Conser-vision](https://www.drivendata.org/competitions/87/competition-image-classification-wildlife-conservation/) (DrivenData) | **Log-loss 0.8990 público, rank #18** | MegaDetectorV5 → crop → ConvNeXt V2 Base. CV site-disjoint. RTX A5000. |
 
 _Se actualiza cada día._
 
@@ -21,13 +21,16 @@ Cada día tiene su propia carpeta `day_XX/` con scripts, README explicando qué 
 
 ```
 .
-├── README.md                     # este fichero
-├── data/                         # CSVs descargados, gitignored
-└── day_01/
-    ├── README.md                 # historia completa del día 1
-    ├── day01.py                  # baseline + EDA + plot
-    ├── pipeline.py               # modelo ganador (F1 0.7534)
-    └── class_distribution.png    # plot de distribución del target
+├── README.md
+├── data/                         # imágenes y CSVs, gitignored
+├── day_01/                       # Richter's Predictor
+│   ├── README.md
+│   ├── day01.py
+│   └── pipeline.py
+└── day_02/                       # Conser-vision
+    ├── README.md
+    ├── day02_v2.py               # pipeline ganador
+    └── cv_summary_v2.png
 ```
 
 ## Stack
