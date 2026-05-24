@@ -10,8 +10,8 @@ Día 1 corrió en CPU. A partir del Día 2, GPU en RunPod community cloud (RTX A
 
 | Día | Tema | Resultado | Notas |
 |---|---|---|---|
-| [01](day_01/) | [Richter's Predictor](https://www.drivendata.org/competitions/57/nepal-earthquake/) (DrivenData) | **F1 0.7534 público, rank 55 / ~8.800 (top 0.6%)** | Ensemble LightGBM + CatBoost con feature engineering. CPU. |
-| [02](day_02/) | [Conser-vision](https://www.drivendata.org/competitions/87/competition-image-classification-wildlife-conservation/) (DrivenData) | **Log-loss 0.8990 público, rank #18** | MegaDetectorV5 → crop → ConvNeXt V2 Base. CV site-disjoint. RTX A5000. |
+| [01](day_01/) | [Richter's Predictor](https://www.drivendata.org/competitions/57/nepal-earthquake/) (DrivenData) | **F1 0.7534 público, rank 55 / ~8.800 (top 0.6%)** | ML Tabular. Ensemble LightGBM + CatBoost con feature engineering. CPU. |
+| [02](day_02/) | [Conser-vision](https://www.drivendata.org/competitions/87/competition-image-classification-wildlife-conservation/) (DrivenData) | **Log-loss 0.8990 público, rank 18 / 2.064 (top 0.9%)** | DL Imagen. MegaDetectorV5 → crop → ConvNeXt V2 Base. CV site-disjoint. RTX A5000. |
 
 _Se actualiza cada día._
 
