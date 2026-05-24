@@ -1,4 +1,4 @@
-# 30 días de IA
+# 10 días de IA
 
 Construyendo algo distinto cada día con ML / IA — competiciones, modelos, experimentos. Cada día es autocontenido: un problema, un pipeline, un resultado.
 
