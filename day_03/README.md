@@ -1,6 +1,6 @@
 # Día 3 — What's Up, Docs?
 
-**Competición:** [DrivenData – What's Up, Docs? Document Summarization with LLMs](https://www.drivendata.org/competitions/298/)
+**Competición:** [DrivenData – What's Up, Docs? Document Summarization with LLMs](https://www.drivendata.org/competitions/297/whats-up-docs/)
 
 **Tarea:** Generar el abstract de papers de ciencias sociales (SocArXiv) a partir del texto completo.
 
