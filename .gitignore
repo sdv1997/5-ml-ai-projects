@@ -4,6 +4,12 @@ data/
 
 # Submissions también fuera del repo — se regeneran corriendo los scripts.
 
+# Artefactos de entrenamiento (regenerables corriendo el script)
+*.pt
+*.onnx
+*.npz
+*.log
+
 # Python
 __pycache__/
 *.pyc
