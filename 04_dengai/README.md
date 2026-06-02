@@ -16,17 +16,19 @@ Primer problema de **regresión + serie temporal** del portfolio. Los slots 1–
 - [x] **Validación temporal** (holdout: primeras 75% semanas → train, últimas 25% → val). CV aleatoria sería leakage.
 - [x] Features de **rolling** sobre drivers climáticos (humedad/temp/precip; el clima precede a los casos) + estacionalidad `weekofyear` (sin/cos). **Sin lags del target** (no disponibles en el test futuro).
 - [x] Baseline ([pipeline.py](pipeline.py)): seasonal-naive como referencia honesta → LightGBM L1 (objetivo MAE) por ciudad, clip≥0 + redondeo a entero.
-- [ ] Mejoras pendientes: lags explícitos del clima (no solo rolling), modelo de conteo (Poisson/NegBinomial o Tweedie), suavizado de la predicción, blend con seasonal-naive en iq.
+- [x] Iteración 2 ([pipeline.py](pipeline.py)): harness que **selecciona config por ciudad** en holdout temporal, barriendo objetivo (L1 / Poisson / Tweedie) × lags de clima × suavizado × blend con seasonal-naive.
 - [ ] Vigilar el gap validación→leaderboard (distribución no estacionaria entre train y test).
 
 ## Resultado
 
 Validación temporal (MAE, menor = mejor):
 
-| Ciudad | seasonal-naive | LightGBM | mejora |
-|---|---|---|---|
-| sj | 24.86 | **16.89** | −7.97 |
-| iq | 7.71 | **7.62** | −0.08 |
+| Ciudad | seasonal-naive | baseline (it.1) | config elegida (it.2) | config |
+|---|---|---|---|---|
+| sj | 24.86 | 16.89 | **16.21** | L1 + lags clima + suavizado(3) |
+| iq | 7.71 | 7.62 | **7.54** | L1 + blend 25% seasonal-naive |
 
-- **sj** mejora mucho sobre la referencia estacional; **iq** apenas (serie más ruidosa, ~18% de semanas a 0, clima menos predictivo).
+- **sj** responde bien a las features de clima; **iq** es ruidosa (~18% semanas a 0) y el modelo apenas supera a la media estacional → un blend ligero con el naive ayuda.
+- **Negativo documentado:** los objetivos de conteo (**Poisson / Tweedie) no mejoraron**. La métrica es MAE y entrenar L1 la optimiza directamente; Poisson/Tweedie minimizan devianza, no MAE.
+- Lo que movió la aguja: **lags explícitos de clima + suavizado** (sj) y **blend con naive** (iq). Ganancias modestas — leaderboard comprimido y señal clima→casos limitada.
 - _LB público: pendiente de submitear `submissions/submission.csv` en DrivenData._
