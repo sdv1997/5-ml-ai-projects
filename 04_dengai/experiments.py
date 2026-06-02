@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from patsy import dmatrix
 from sklearn.model_selection import TimeSeriesSplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -99,8 +100,34 @@ def pred_sarimax(tr, val, feats):
     return np.clip(np.expm1(np.asarray(best[1].get_forecast(steps=len(val), exog=Xval).predicted_mean)), 0, None)
 
 
-MODELS = {"seasonal-naive": pred_naive, "lightgbm": pred_lgbm,
-          "negbin-glm": pred_negbin, "sarimax": pred_sarimax}
+def pred_negbin_gam(tr, val, feats):
+    """NegBin GAM estilo DLNM: splines no lineales cr() sobre los drivers con lag
+    óptimo + estacionalidad cíclica cc(weekofyear). El modelo de libro en
+    epidemiología climática. Pierde igualmente: optimiza verosimilitud (media),
+    no MAE (mediana)."""
+    lag_cols = [c for c in feats if c not in ("woy_sin", "woy_cos")]
+    def design_df(d):
+        out = pd.DataFrame({f"g{i}": d[c].values for i, c in enumerate(lag_cols)})
+        out["woy"] = d["weekofyear"].clip(upper=52).values
+        return out.interpolate(limit_direction="both").fillna(out.mean())
+    Dtr, Dval = design_df(tr), design_df(val)
+    terms = "cc(woy, df=6) + " + " + ".join(f"cr(g{i}, df=4)" for i in range(len(lag_cols)))
+    dm_tr = dmatrix(terms, Dtr, return_type="dataframe")
+    dm_val = dmatrix(dm_tr.design_info, Dval, return_type="dataframe")
+    best = None
+    for alpha in [0.3, 0.6, 1.0, 1.5]:
+        try:
+            m = sm.GLM(tr["total_cases"].values, dm_tr,
+                       family=sm.families.NegativeBinomial(alpha=alpha)).fit(maxiter=300)
+            if best is None or m.aic < best[0]:
+                best = (m.aic, m)
+        except Exception:
+            continue
+    return np.clip(best[1].predict(dm_val), 0, None) if best else np.full(len(val), tr["total_cases"].mean())
+
+
+MODELS = {"seasonal-naive": pred_naive, "lightgbm": pred_lgbm, "negbin-glm": pred_negbin,
+          "negbin-gam": pred_negbin_gam, "sarimax": pred_sarimax}
 
 
 def rolling_cv(tr_f, feats, fns, n_splits=4):

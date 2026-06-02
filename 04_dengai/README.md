@@ -21,6 +21,7 @@ Primer problema de **regresión + serie temporal** del portfolio. Los slots 1–
 - [x] Iteración 4 — hipótesis = **sobreajuste por exceso de features**. Reduce a 5 drivers, **busca el lag óptimo por variable** (clima precede a casos), suaviza features y predicción, modelo simple. Es el modelo final → [pipeline.py](pipeline.py).
 - [x] Iteración 5 — **ensemble por ciudad** (lgbm + NegBin + seasonal-naive) con pesos por rolling-origin. Ayuda en iq, no en sj. Ver [experiments.py](experiments.py), bloque B.
 - [x] Iteración 6 — **autorregresión recursiva** con lags del propio target. **NEGATIVO** (sj 26.16 → 58.62): el error se acumula al realimentar predicciones en un horizonte de 260 semanas. La autocorrelación es real pero inutilizable en este test futuro. Ver [experiments.py](experiments.py), bloque C.
+- [x] Iteración 7 — **NegBin-GAM estilo DLNM** (splines `cr()` no lineales sobre drivers con lag óptimo + estacionalidad cíclica `cc()`), el modelo *gold-standard* de epidemiología climática. **NEGATIVO** (sj 29.88, iq 11.50): pierde contra LightGBM. Ver [experiments.py](experiments.py), bloque A.
 
 **Estructura del proyecto:** [eda.py](eda.py) (exploración) · [pipeline.py](pipeline.py) (modelo final, reproduce la submission) · [experiments.py](experiments.py) (alternativas probadas y descartadas). Datos en `04_dengai/data/` (gitignored).
 
@@ -128,8 +129,28 @@ Hipótesis: la autocorrelación de los casos (sj lag1 = 0.96) es la señal más 
 - **Falla estrepitosamente.** Al no observar los casos recientes en el test, el modelo se realimenta de sus propias predicciones y el **error se acumula** sobre 260 semanas (peor en los brotes: sobrepasa y propaga el sobrepaso).
 - Refuerza la lección de fondo: DengAI es un **forecast de horizonte largo con señal climática débil**; la autocorrelación no es explotable. Por eso SARIMAX (que es autorregresivo) también falló en el LB.
 
+### Bake-off final de modelos (rolling-origin MAE, [experiments.py](experiments.py))
+
+| modelo | sj | iq |
+|---|---|---|
+| **LightGBM (L1)** | **26.16** | **6.37** |
+| SARIMAX | 22.32* | 7.27 |
+| NegBin GLM | 29.77 | 7.84 |
+| NegBin-GAM (DLNM) | 29.88 | 11.50 |
+| seasonal-naive | 30.80 | 6.35 |
+
+\* SARIMAX "gana" en CV pero **colapsa el nivel en el test real** (predice media 10.6 en sj vs ~34 histórico) → en el leaderboard fue peor (30.89). No generaliza al horizonte largo.
+
+### Por qué ningún modelo de series temporales bate a LightGBM aquí
+
+La razón profunda no es el modelo, es la **métrica + la naturaleza del problema**:
+1. **MAE se minimiza con la MEDIANA condicional.** LightGBM con objetivo **L1 predice la mediana** → optimiza la métrica por construcción. SARIMAX, NegBin y GAM/DLNM optimizan **verosimilitud/media**: modelan mejor el proceso, pero en una serie asimétrica con picos raros la media ≠ la mediana → predicen peor *la métrica*.
+2. **Sin autorregresión usable:** el test es un bloque de futuro largo; los modelos AR (SARIMAX) revierten y colapsan el nivel. Lo que sirve es **regresión sobre exógenas conocidas** (clima), y ahí el boosting regularizado gana al GAM (que sobreajusta el ruido, ver iq 11.50).
+
+Es decir: el árbol no gana por "más potente", gana porque **encaja con la métrica (mediana) y la estructura (regresión sobre exógenas) de este problema**. Saberlo y demostrarlo es el resultado de valor.
+
 ### Conclusión del proyecto
 
-Tras 6 iteraciones, el **mejor modelo legítimo es it.4 (lgbm-small, 5 features + lag óptimo): MAE LB 23.67**, ya por debajo del benchmark público (~25). Probadas y descartadas con criterio: SARIMAX, NegBin, ensemble (marginal) y autorregresión (negativo).
+Tras 7 iteraciones, el **mejor modelo legítimo es it.4 (lgbm-small, 5 features + lag óptimo): MAE LB 23.67**, ya por debajo del benchmark público (~25). Probadas y descartadas con criterio (rolling-origin): SARIMAX, NegBin lineal, NegBin-GAM/DLNM, ensemble (marginal) y autorregresión (negativo).
 
 El top del leaderboard (~10-11) es, en mi lectura, producto de **sobreajuste al test público** (practice comp sin leaderboard privado, 17k participantes, 8 años de submissions diarias contra un test estático), no de una técnica generalizable que nos falte. El valor de este proyecto está en el **método**: validación rolling-origin honesta, diagnóstico de sobreajuste confirmado en el LB, y un mapa claro de qué familias de modelo funcionan y cuáles no en un forecasting epidemiológico real.
