@@ -59,3 +59,15 @@ Con rolling-origin (4 folds expandiendo), el MAE offline ya es realista (≈ LB,
 - **NegBin GLM** (el enfoque del benchmark oficial) decepcionó: sin tuning y sin modelar autocorrelación temporal, se queda corto. Negativo documentado.
 - **Diversidad del portfolio:** el slot estrella deja de ser gradient boosting (ya estaba en el slot 1) y pasa a **SARIMAX**, familia estadística de series temporales. LightGBM queda como referencia comparativa, junto al seasonal-naive.
 - Estimación de LB pooled con esta config: **≈ 16** (vs ~24 de la submission 1). _Pendiente de confirmar submiteando._
+
+### Submission 2 — la CV mejor SIGUIÓ sin predecir el LB
+
+| | MAE LB público | vs sub 1 |
+|---|---|---|
+| Submission 2 (SARIMAX sj + naive iq) | **~30** | **+6 PEOR** |
+
+**Lección dura y honesta:** la estimación de ~16 estaba mal. La validación rolling-origin, aunque más realista que el corte único, **tampoco predijo el leaderboard**: SARIMAX ganó en CV pero perdió en el test real.
+
+- El test de sj son 260 semanas de futuro de una vez; los folds de CV validaban bloques internos más cortos con historia reciente cerca. **A horizonte largo SARIMAX se degrada** (el AR pierde fuerza, queda colgado de clima+estacionalidad, que extrapolan peor).
+- Error de método: cambié **dos cosas a la vez** (sj y iq) → sin desglose por ciudad no se aísla la causa.
+- Meta-lección: en este problema **ninguna CV offline es un oráculo fiable**; el test es un único bloque de futuro muy largo. Toca humildad: pocos cambios por submission y diagnóstico por ciudad.
