@@ -86,4 +86,16 @@ Diagnóstico: ~90 features sobre 936/520 filas = sobreajuste. Receta: 5 drivers,
 - **Lags óptimos en sj epidemiológicamente sensatos:** humedad lag 5 sem, dew point 6, temp media 8, temp mín 7 — el clima de hace **~1-2 meses** predice los casos de hoy.
 - iq sigue siendo ruido (naive ≈ lgbm); se usa lgbm-small por robustez ante brotes (el naive los aplana).
 - **Realismo:** el top del LB está en ~10-11; es un leaderboard muy comprimido. Estas mejoras van en la dirección correcta (menos overfit) pero cerrar a ese nivel es trabajo largo con rendimientos decrecientes.
-- _Submission it.4 (lgbm-small ambas ciudades) pendiente de subir — A/B limpio vs la sub1 de 90 features._
+
+### Resumen de submissions (LB público, MAE)
+
+| # | Config | LB público |
+|---|---|---|
+| 1 | LightGBM ~90 features (ambas ciudades) | 24.29 |
+| 2 | SARIMAX sj + seasonal-naive iq | 30.89 |
+| 3 | **lgbm-small: 5 features + lag óptimo (ambas)** | **23.67** ← mejor |
+
+**Conclusiones validadas en el leaderboard:**
+- **Reducir features baja el error real** (24.29 → 23.67): el sobreajuste era el problema, confirmado en LB y no solo en CV.
+- **La rolling-origin acertó la dirección** de it.4 (predijo mejora y la hubo); en cambio SARIMAX ganó en CV y perdió en LB. Lección: la rolling-origin es razonable para comparar modelos *simples y robustos*, no para extrapolaciones de horizonte largo (SARIMAX).
+- La combo SARIMAX + naive fue claramente peor → descartada.
