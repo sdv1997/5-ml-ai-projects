@@ -31,4 +31,13 @@ Validación temporal (MAE, menor = mejor):
 - **sj** responde bien a las features de clima; **iq** es ruidosa (~18% semanas a 0) y el modelo apenas supera a la media estacional → un blend ligero con el naive ayuda.
 - **Negativo documentado:** los objetivos de conteo (**Poisson / Tweedie) no mejoraron**. La métrica es MAE y entrenar L1 la optimiza directamente; Poisson/Tweedie minimizan devianza, no MAE.
 - Lo que movió la aguja: **lags explícitos de clima + suavizado** (sj) y **blend con naive** (iq). Ganancias modestas — leaderboard comprimido y señal clima→casos limitada.
-- _LB público: pendiente de submitear `submissions/submission.csv` en DrivenData._
+
+### Submission 1 — el gap validación→leaderboard
+
+| | MAE val (pooled) | MAE LB público | rank |
+|---|---|---|---|
+| Submission 1 | ~13 | **~24** | ~1007 |
+
+**Gran lección (negativa, documentada):** la validación (un único holdout = últimas 25% semanas) era **demasiado optimista**. El test real casi dobla el error. Casi todo el gap viene de **sj**: el modelo ajustó un periodo calmado (~2003–2008) pero el test (2008–2013) tiene brotes cuya magnitud el clima no anticipa. Seleccionar config (suavizado/blend/lags) sobre ese único corte fue, en parte, ajustar a un split afortunado.
+
+**Implicación para la siguiente iteración:** necesitamos una **validación que track-ee el leaderboard** antes de tocar el modelo — rolling-origin (varios cortes temporales) en vez de uno. Si el offline no predice el online, las "mejoras" offline no son fiables.
