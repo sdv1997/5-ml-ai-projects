@@ -18,6 +18,7 @@ Primer problema de **regresión + serie temporal** del portfolio. Los slots 1–
 - [x] Baseline ([pipeline.py](pipeline.py)): seasonal-naive como referencia honesta → LightGBM L1 (objetivo MAE) por ciudad, clip≥0 + redondeo a entero.
 - [x] Iteración 2 ([pipeline.py](pipeline.py)): harness que **selecciona config por ciudad** en holdout temporal, barriendo objetivo (L1 / Poisson / Tweedie) × lags de clima × suavizado × blend con seasonal-naive.
 - [x] Iteración 3 ([compare_models.py](compare_models.py)): **validación rolling-origin** (4 orígenes) + comparación de 4 familias de modelo por ciudad (seasonal-naive, LightGBM, NegBin GLM, SARIMAX). Genera la submission con el mejor por ciudad.
+- [x] Iteración 4 ([model_lagopt.py](model_lagopt.py)): hipótesis = **sobreajuste por exceso de features**. Reduce a 5 drivers, **busca el lag óptimo por variable** (clima precede a casos), suaviza features y predicción, modelo simple. ([make_submission.py](make_submission.py) compone submissions por ciudad para aislar causas en el LB.)
 
 ## Resultado
 
@@ -71,3 +72,18 @@ Con rolling-origin (4 folds expandiendo), el MAE offline ya es realista (≈ LB,
 - El test de sj son 260 semanas de futuro de una vez; los folds de CV validaban bloques internos más cortos con historia reciente cerca. **A horizonte largo SARIMAX se degrada** (el AR pierde fuerza, queda colgado de clima+estacionalidad, que extrapolan peor).
 - Error de método: cambié **dos cosas a la vez** (sj y iq) → sin desglose por ciudad no se aísla la causa.
 - Meta-lección: en este problema **ninguna CV offline es un oráculo fiable**; el test es un único bloque de futuro muy largo. Toca humildad: pocos cambios por submission y diagnóstico por ciudad.
+
+### Iteración 4 — atacar el sobreajuste (pocas features + lag óptimo)
+
+Diagnóstico: ~90 features sobre 936/520 filas = sobreajuste. Receta: 5 drivers, lag óptimo por variable, suavizado de features y predicción, modelo simple.
+
+| | rolling-origin MAE sj | rolling-origin MAE iq |
+|---|---|---|
+| it.3 (LightGBM, ~90 feats) | 28.84 | 6.55 |
+| **it.4 (lgbm-small, 5 feats + lag óptimo)** | **26.16** | 6.37 |
+
+- **Reducir features + acertar el lag mejora sj** (28.84 → 26.16 en rolling-origin) → confirma que sobreajustábamos.
+- **Lags óptimos en sj epidemiológicamente sensatos:** humedad lag 5 sem, dew point 6, temp media 8, temp mín 7 — el clima de hace **~1-2 meses** predice los casos de hoy.
+- iq sigue siendo ruido (naive ≈ lgbm); se usa lgbm-small por robustez ante brotes (el naive los aplana).
+- **Realismo:** el top del LB está en ~10-11; es un leaderboard muy comprimido. Estas mejoras van en la dirección correcta (menos overfit) pero cerrar a ese nivel es trabajo largo con rendimientos decrecientes.
+- _Submission it.4 (lgbm-small ambas ciudades) pendiente de subir — A/B limpio vs la sub1 de 90 features._
