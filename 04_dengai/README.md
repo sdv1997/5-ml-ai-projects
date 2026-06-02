@@ -19,6 +19,7 @@ Primer problema de **regresión + serie temporal** del portfolio. Los slots 1–
 - [x] Iteración 2 ([pipeline.py](pipeline.py)): harness que **selecciona config por ciudad** en holdout temporal, barriendo objetivo (L1 / Poisson / Tweedie) × lags de clima × suavizado × blend con seasonal-naive.
 - [x] Iteración 3 ([compare_models.py](compare_models.py)): **validación rolling-origin** (4 orígenes) + comparación de 4 familias de modelo por ciudad (seasonal-naive, LightGBM, NegBin GLM, SARIMAX). Genera la submission con el mejor por ciudad.
 - [x] Iteración 4 ([model_lagopt.py](model_lagopt.py)): hipótesis = **sobreajuste por exceso de features**. Reduce a 5 drivers, **busca el lag óptimo por variable** (clima precede a casos), suaviza features y predicción, modelo simple. ([make_submission.py](make_submission.py) compone submissions por ciudad para aislar causas en el LB.)
+- [x] Iteración 5 ([ensemble.py](ensemble.py)): **ensemble por ciudad** (lgbm-small + NegBin + seasonal-naive) con pesos elegidos por rolling-origin. Ayuda en iq, no en sj.
 
 ## Resultado
 
@@ -99,3 +100,15 @@ Diagnóstico: ~90 features sobre 936/520 filas = sobreajuste. Receta: 5 drivers,
 - **Reducir features baja el error real** (24.29 → 23.67): el sobreajuste era el problema, confirmado en LB y no solo en CV.
 - **La rolling-origin acertó la dirección** de it.4 (predijo mejora y la hubo); en cambio SARIMAX ganó en CV y perdió en LB. Lección: la rolling-origin es razonable para comparar modelos *simples y robustos*, no para extrapolaciones de horizonte largo (SARIMAX).
 - La combo SARIMAX + naive fue claramente peor → descartada.
+
+### Iteración 5 — ensemble por ciudad
+
+Blend `lgbm-small + NegBin + seasonal-naive` con pesos por rolling-origin (simplex, paso 0.25):
+
+| ciudad | pesos (lgbm, negbin, naive) | rolling MAE | vs it.4 |
+|---|---|---|---|
+| sj | (1.0, 0, 0) — lgbm puro | 26.16 | = |
+| iq | (0.25, 0.25, 0.5) | **6.18** | −0.19 |
+
+- **iq mejora** al promediar (reduce varianza en una serie ruidosa); **sj no** (los otros modelos son demasiado peores para aportar).
+- Ganancia esperada en LB **marginal**: el error vive en sj (260/416 del pooled) y ahí no movemos nada. **Suelo de lo principled** — para bajar de verdad habría que resolver sj, y las familias razonables (boosting, SARIMAX, NegBin) ya se probaron.
