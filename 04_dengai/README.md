@@ -17,7 +17,7 @@ Primer problema de **regresión + serie temporal** del portfolio. Los slots 1–
 - [x] Features de **rolling** sobre drivers climáticos (humedad/temp/precip; el clima precede a los casos) + estacionalidad `weekofyear` (sin/cos). **Sin lags del target** (no disponibles en el test futuro).
 - [x] Baseline ([pipeline.py](pipeline.py)): seasonal-naive como referencia honesta → LightGBM L1 (objetivo MAE) por ciudad, clip≥0 + redondeo a entero.
 - [x] Iteración 2 ([pipeline.py](pipeline.py)): harness que **selecciona config por ciudad** en holdout temporal, barriendo objetivo (L1 / Poisson / Tweedie) × lags de clima × suavizado × blend con seasonal-naive.
-- [ ] Vigilar el gap validación→leaderboard (distribución no estacionaria entre train y test).
+- [x] Iteración 3 ([compare_models.py](compare_models.py)): **validación rolling-origin** (4 orígenes) + comparación de 4 familias de modelo por ciudad (seasonal-naive, LightGBM, NegBin GLM, SARIMAX). Genera la submission con el mejor por ciudad.
 
 ## Resultado
 
@@ -41,3 +41,21 @@ Validación temporal (MAE, menor = mejor):
 **Gran lección (negativa, documentada):** la validación (un único holdout = últimas 25% semanas) era **demasiado optimista**. El test real casi dobla el error. Casi todo el gap viene de **sj**: el modelo ajustó un periodo calmado (~2003–2008) pero el test (2008–2013) tiene brotes cuya magnitud el clima no anticipa. Seleccionar config (suavizado/blend/lags) sobre ese único corte fue, en parte, ajustar a un split afortunado.
 
 **Implicación para la siguiente iteración:** necesitamos una **validación que track-ee el leaderboard** antes de tocar el modelo — rolling-origin (varios cortes temporales) en vez de uno. Si el offline no predice el online, las "mejoras" offline no son fiables.
+
+### Iteración 3 — validación rolling-origin + comparación de modelos
+
+Con rolling-origin (4 folds expandiendo), el MAE offline ya es realista (≈ LB, no el ~16 optimista del corte único). Comparación por ciudad:
+
+| modelo | MAE sj | MAE iq |
+|---|---|---|
+| seasonal-naive | 30.86 | **6.54** |
+| LightGBM (L1) | 28.84 | 6.55 |
+| NegBin GLM | 29.11 | 8.70 |
+| **SARIMAX** | **22.18** | 7.74 |
+| **elegido** | **SARIMAX** | **seasonal-naive** |
+
+- **SARIMAX gana claro en sj** (22.2 vs 28.8 de LightGBM): AR/I/MA + estacionalidad de Fourier + clima exógeno modela los brotes mucho mejor que los árboles. La herramienta correcta para una serie temporal.
+- **En iq nada supera al seasonal-naive**: serie demasiado ruidosa (~18% semanas a 0), la señal clima→casos es marginal. Aceptarlo es lo honesto.
+- **NegBin GLM** (el enfoque del benchmark oficial) decepcionó: sin tuning y sin modelar autocorrelación temporal, se queda corto. Negativo documentado.
+- **Diversidad del portfolio:** el slot estrella deja de ser gradient boosting (ya estaba en el slot 1) y pasa a **SARIMAX**, familia estadística de series temporales. LightGBM queda como referencia comparativa, junto al seasonal-naive.
+- Estimación de LB pooled con esta config: **≈ 16** (vs ~24 de la submission 1). _Pendiente de confirmar submiteando._
