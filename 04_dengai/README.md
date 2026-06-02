@@ -4,7 +4,7 @@
 > **Tarea:** Predecir el número de casos semanales de dengue en San Juan (Puerto Rico) e Iquitos (Perú) a partir de variables climáticas y ambientales (temperatura, precipitación, vegetación NDVI, humedad…).
 > **Métrica:** MAE (↓ mejor).
 > **Submission:** CSV (`city, year, weekofyear, total_cases`).
-> **Resultado:** **MAE LB público 23.67 · rank 809 / ~17.390 (top ~5%)**, por debajo del benchmark oficial (~25). 7 iteraciones documentadas abajo.
+> **Resultado:** **MAE LB público 23.67 · rank 809 / 16.396 (top 4.9%)**, por debajo del benchmark oficial (~25). 7 iteraciones documentadas abajo.
 
 ## Por qué este proyecto
 
@@ -153,4 +153,4 @@ Es decir: el árbol no gana por "más potente", gana porque **encaja con la mét
 
 Tras 7 iteraciones, el **mejor modelo legítimo es it.4 (lgbm-small, 5 features + lag óptimo): MAE LB 23.67**, ya por debajo del benchmark público (~25). Probadas y descartadas con criterio (rolling-origin): SARIMAX, NegBin lineal, NegBin-GAM/DLNM, ensemble (marginal) y autorregresión (negativo).
 
-El top del leaderboard (~10-11) es, en mi lectura, producto de **sobreajuste al test público** (practice comp sin leaderboard privado, 17k participantes, 8 años de submissions diarias contra un test estático), no de una técnica generalizable que nos falte. El valor de este proyecto está en el **método**: validación rolling-origin honesta, diagnóstico de sobreajuste confirmado en el LB, y un mapa claro de qué familias de modelo funcionan y cuáles no en un forecasting epidemiológico real.
+El top del leaderboard (~10-11) es, en mi lectura, producto de **sobreajuste al test público** (practice comp sin leaderboard privado, 16.396 participantes, años de submissions diarias contra un test estático), no de una técnica generalizable que nos falte. El valor de este proyecto está en el **método**: validación rolling-origin honesta, diagnóstico de sobreajuste confirmado en el LB, y un mapa claro de qué familias de modelo funcionan y cuáles no en un forecasting epidemiológico real.
