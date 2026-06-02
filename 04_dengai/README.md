@@ -20,6 +20,7 @@ Primer problema de **regresión + serie temporal** del portfolio. Los slots 1–
 - [x] Iteración 3 ([compare_models.py](compare_models.py)): **validación rolling-origin** (4 orígenes) + comparación de 4 familias de modelo por ciudad (seasonal-naive, LightGBM, NegBin GLM, SARIMAX). Genera la submission con el mejor por ciudad.
 - [x] Iteración 4 ([model_lagopt.py](model_lagopt.py)): hipótesis = **sobreajuste por exceso de features**. Reduce a 5 drivers, **busca el lag óptimo por variable** (clima precede a casos), suaviza features y predicción, modelo simple. ([make_submission.py](make_submission.py) compone submissions por ciudad para aislar causas en el LB.)
 - [x] Iteración 5 ([ensemble.py](ensemble.py)): **ensemble por ciudad** (lgbm-small + NegBin + seasonal-naive) con pesos elegidos por rolling-origin. Ayuda en iq, no en sj.
+- [x] Iteración 6 ([autoreg.py](autoreg.py)): **autorregresión recursiva** con lags del propio target. **NEGATIVO** (sj 26.16 → 58.62): el error se acumula al realimentar predicciones en un horizonte de 260 semanas. La autocorrelación es real pero inutilizable en este test futuro.
 
 ## Resultado
 
@@ -112,3 +113,21 @@ Blend `lgbm-small + NegBin + seasonal-naive` con pesos por rolling-origin (simpl
 
 - **iq mejora** al promediar (reduce varianza en una serie ruidosa); **sj no** (los otros modelos son demasiado peores para aportar).
 - Ganancia esperada en LB **marginal**: el error vive en sj (260/416 del pooled) y ahí no movemos nada. **Suelo de lo principled** — para bajar de verdad habría que resolver sj, y las familias razonables (boosting, SARIMAX, NegBin) ya se probaron.
+
+### Iteración 6 — autorregresión recursiva (negativo)
+
+Hipótesis: la autocorrelación de los casos (sj lag1 = 0.96) es la señal más fuerte; usarla recursivamente (predecir t → usarlo como lag de t+1) debería ayudar en sj.
+
+| ciudad | sin-AR (it.4) | con-AR recursivo |
+|---|---|---|
+| sj | 26.16 | **58.62** ❌ |
+| iq | 6.37 | 6.45 |
+
+- **Falla estrepitosamente.** Al no observar los casos recientes en el test, el modelo se realimenta de sus propias predicciones y el **error se acumula** sobre 260 semanas (peor en los brotes: sobrepasa y propaga el sobrepaso).
+- Refuerza la lección de fondo: DengAI es un **forecast de horizonte largo con señal climática débil**; la autocorrelación no es explotable. Por eso SARIMAX (que es autorregresivo) también falló en el LB.
+
+### Conclusión del proyecto
+
+Tras 6 iteraciones, el **mejor modelo legítimo es it.4 (lgbm-small, 5 features + lag óptimo): MAE LB 23.67**, ya por debajo del benchmark público (~25). Probadas y descartadas con criterio: SARIMAX, NegBin, ensemble (marginal) y autorregresión (negativo).
+
+El top del leaderboard (~10-11) es, en mi lectura, producto de **sobreajuste al test público** (practice comp sin leaderboard privado, 17k participantes, 8 años de submissions diarias contra un test estático), no de una técnica generalizable que nos falte. El valor de este proyecto está en el **método**: validación rolling-origin honesta, diagnóstico de sobreajuste confirmado en el LB, y un mapa claro de qué familias de modelo funcionan y cuáles no en un forecasting epidemiológico real.
