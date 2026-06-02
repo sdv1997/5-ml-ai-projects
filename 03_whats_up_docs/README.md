@@ -81,9 +81,9 @@ Gap train→público consistente: +0.0151 en train vs +0.0140 en LB (el modelo v
 bash 03_whats_up_docs/setup.sh
 
 # 2. Eval rápido en 100 papers de train
-HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/day03.py --eval-only
+HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/pipeline.py --eval-only
 
 # 3. Submission completa (test + scoring train, ~3 min en A5000)
-HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/day03.py
+HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/pipeline.py
 # → 03_whats_up_docs/submission.csv
 ```

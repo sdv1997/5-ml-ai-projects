@@ -104,7 +104,7 @@ FOLD CV (5-fold StratifiedKFold seed=42):
 pip install pandas numpy scikit-learn lightgbm catboost matplotlib
 
 # 3. Ejecutar el pipeline:
-python 01_richters_predictor/day01.py      # baseline + EDA + class_distribution.png (~2 min)
+python 01_richters_predictor/baseline.py   # baseline + EDA + class_distribution.png (~2 min)
 python 01_richters_predictor/pipeline.py   # ensemble final (~15-20 min CPU)
 
 # Output: 01_richters_predictor/submissions/submission.csv  →  subir manualmente al leaderboard.

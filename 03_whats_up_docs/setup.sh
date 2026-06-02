@@ -19,5 +19,5 @@ EOF
 
 echo "=== Setup completado ==="
 echo "Ejecutar desde /workspace/5-ml-ai-projects:"
-echo "  HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/day03.py --eval-only"
-echo "  HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/day03.py"
+echo "  HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/pipeline.py --eval-only"
+echo "  HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/pipeline.py"

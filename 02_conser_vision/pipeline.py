@@ -20,9 +20,9 @@ Pipeline:
     5) Ensemble OOF (media de probabilidades) → submission.
 
 Uso:
-    python day02_v2.py                # detecta (si no hay caché) + entrena
-    python day02_v2.py --detect-only  # solo MegaDetector, sin entrenar
-    python day02_v2.py --train-only   # solo entrena (necesita caché previo)
+    python pipeline.py                # detecta (si no hay caché) + entrena
+    python pipeline.py --detect-only  # solo MegaDetector, sin entrenar
+    python pipeline.py --train-only   # solo entrena (necesita caché previo)
 """
 
 import argparse

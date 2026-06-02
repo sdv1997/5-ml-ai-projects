@@ -75,10 +75,10 @@ Gap CV → LB: CV 0.9479 → LB 0.8990 (LB mejor que CV → los sites de test so
 ```bash
 # Datos en data/ (gitignored, descargar de DrivenData)
 # 1. Detección (solo primera vez, ~48 min en A5000)
-python 02_conser_vision/day02_v2.py --detect-only
+python 02_conser_vision/pipeline.py --detect-only
 
 # 2. Entrenamiento + CV + submission (~2h en A5000)
 tmux new-session -d -s training \
-  'python 02_conser_vision/day02_v2.py --train-only 2>&1 | tee 02_conser_vision/training_v2.log'
+  'python 02_conser_vision/pipeline.py --train-only 2>&1 | tee 02_conser_vision/training.log'
 tmux attach -t training
 ```
