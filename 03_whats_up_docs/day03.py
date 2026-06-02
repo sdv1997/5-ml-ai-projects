@@ -23,8 +23,8 @@ from pathlib import Path
 import pandas as pd
 from rouge_score import rouge_scorer
 
-DATA_DIR = Path("data/day03")
-OUT_DIR = Path("day_03")
+DATA_DIR = Path("data/03_whats_up_docs")
+OUT_DIR = Path("03_whats_up_docs")
 
 MODEL_ID = "Qwen/Qwen2.5-7B-Instruct-AWQ"
 

@@ -1,4 +1,4 @@
-# Día 2 — Conser-vision
+# Proyecto 2 — Conser-vision
 
 **Competición:** [DrivenData – Competition Image Classification: Wildlife Conservation](https://www.drivendata.org/competitions/87/)
 
@@ -75,10 +75,10 @@ Gap CV → LB: CV 0.9479 → LB 0.8990 (LB mejor que CV → los sites de test so
 ```bash
 # Datos en data/ (gitignored, descargar de DrivenData)
 # 1. Detección (solo primera vez, ~48 min en A5000)
-python day_02/day02_v2.py --detect-only
+python 02_conser_vision/day02_v2.py --detect-only
 
 # 2. Entrenamiento + CV + submission (~2h en A5000)
 tmux new-session -d -s training \
-  'python day_02/day02_v2.py --train-only 2>&1 | tee day_02/training_v2.log'
+  'python 02_conser_vision/day02_v2.py --train-only 2>&1 | tee 02_conser_vision/training_v2.log'
 tmux attach -t training
 ```

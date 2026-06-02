@@ -1,5 +1,5 @@
 """
-Día 2 / 30 — Conser-vision v2 — MegaDetector + ConvNeXt V2 Base
+Proyecto 2 — Conser-vision v2 — MegaDetector + ConvNeXt V2 Base
 ================================================================
 Mejora clave sobre v1: MegaDetectorV5 pre-recorta el animal antes de clasificar.
 Elimina el fondo (que puede ser específico del site) y fuerza al clasificador

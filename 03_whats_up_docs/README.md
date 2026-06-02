@@ -1,4 +1,4 @@
-# Día 3 — What's Up, Docs?
+# Proyecto 3 — What's Up, Docs?
 
 **Competición:** [DrivenData – What's Up, Docs? Document Summarization with LLMs](https://www.drivendata.org/competitions/297/whats-up-docs/)
 
@@ -74,16 +74,16 @@ Gap train→público consistente: +0.0151 en train vs +0.0140 en LB (el modelo v
 ## Reproducibilidad
 
 ```bash
-# Desde /workspace/30-days-of-ai/
-# Datos en data/day03/ (gitignored, descargar de DrivenData)
+# Desde /workspace/5-ml-ai-projects/
+# Datos en data/03_whats_up_docs/ (gitignored, descargar de DrivenData)
 
 # 1. Setup: instalar deps y descargar modelo (~10s, modelo va a /workspace/)
-bash day_03/setup.sh
+bash 03_whats_up_docs/setup.sh
 
 # 2. Eval rápido en 100 papers de train
-HF_HOME=/workspace/.cache/huggingface python3 day_03/day03.py --eval-only
+HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/day03.py --eval-only
 
 # 3. Submission completa (test + scoring train, ~3 min en A5000)
-HF_HOME=/workspace/.cache/huggingface python3 day_03/day03.py
-# → day_03/submission.csv
+HF_HOME=/workspace/.cache/huggingface python3 03_whats_up_docs/day03.py
+# → 03_whats_up_docs/submission.csv
 ```

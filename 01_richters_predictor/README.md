@@ -1,11 +1,11 @@
-# Día 1 — Richter's Predictor
+# Proyecto 1 — Richter's Predictor
 
 > **Reto:** [Richter's Predictor — Modeling Earthquake Damage](https://www.drivendata.org/competitions/57/nepal-earthquake/) (DrivenData)
 > **Leaderboard:** https://www.drivendata.org/competitions/57/nepal-earthquake/leaderboard/?page=1
 > **Objetivo:** Predecir el grado de daño (1: bajo / 2: medio / 3: destrucción casi total) de 260k+ edificios de Nepal tras el terremoto de Gorkha (2015) a partir de cómo estaban construidos.
 > **Métrica:** F1 micro-averaged.
 
-## Resultado final del Día 1
+## Resultado final
 
 | | F1 micro |
 |---|---|
@@ -13,7 +13,7 @@
 | **Rank** | **55 / ~8.800** (top 0.6%) |
 | CV 5-fold (StratifiedKFold seed=42) | 0.7531 ± 0.0014 |
 
-5 submissions a lo largo del día:
+5 submissions:
 
 | # | Modelo | CV | Público | Rank |
 |---|---|---|---|---|
@@ -33,7 +33,7 @@ LightGBM out-of-the-box sobre las 38 features originales. Categóricas de texto 
 
 `geo_level_1_id`, `geo_level_2_id`, `geo_level_3_id` venían como `int64` — LightGBM las trataba como **enteros ordinales**. Pero `geo_level_3_id` tiene 11.595 aldeas únicas; la aldea 12.345 no es "mayor" que la 12.344, es otra. Casteando a `category`, LightGBM busca splits agrupando aldeas en lugar de splits numéricos sin sentido.
 
-Una línea de código → **+0.0309 F1 público**. La mayor ganancia individual del día.
+Una línea de código → **+0.0309 F1 público**. La mayor ganancia individual del proyecto.
 
 ### 3. Ensemble con CatBoost (F1 0.7510, +0.0022)
 
@@ -104,10 +104,10 @@ FOLD CV (5-fold StratifiedKFold seed=42):
 pip install pandas numpy scikit-learn lightgbm catboost matplotlib
 
 # 3. Ejecutar el pipeline:
-python day_01/day01.py      # baseline + EDA + class_distribution.png (~2 min)
-python day_01/pipeline.py   # ensemble final (~15-20 min CPU)
+python 01_richters_predictor/day01.py      # baseline + EDA + class_distribution.png (~2 min)
+python 01_richters_predictor/pipeline.py   # ensemble final (~15-20 min CPU)
 
-# Output: day_01/submissions/submission.csv  →  subir manualmente al leaderboard.
+# Output: 01_richters_predictor/submissions/submission.csv  →  subir manualmente al leaderboard.
 ```
 
 Sin GPU. Todo CPU.

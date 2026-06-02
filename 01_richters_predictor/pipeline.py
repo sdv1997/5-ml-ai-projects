@@ -1,5 +1,5 @@
 """
-Pipeline final del Día 1 — F1 público 0.7534 (rank 55 / ~8.800).
+Pipeline final del Proyecto 1 — F1 público 0.7534 (rank 55 / ~8.800).
 
 Ensemble simple de LightGBM + CatBoost sobre 56 features
 (38 originales + 18 derivadas: agregaciones por aldea/distrito y
@@ -11,7 +11,7 @@ Outputs:
   - reporte de F1 micro por modelo y por fold en consola
 
 Uso:
-  python day_01/pipeline.py
+  python 01_richters_predictor/pipeline.py
 
 Requisitos: pandas, numpy, scikit-learn, lightgbm, catboost.
 """

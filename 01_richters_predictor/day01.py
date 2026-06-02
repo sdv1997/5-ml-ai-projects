@@ -1,5 +1,5 @@
 """
-Día 1 / 30 — Richter's Predictor
+Proyecto 1 — Richter's Predictor
 =================================
 
 EDA mínimo + 2 baselines:
@@ -154,7 +154,7 @@ print(f"Submission guardado: submissions/baseline_lgbm.csv\n")
 # Resumen final
 # ---------------------------------------------------------------------------
 print("=" * 55)
-print("Resumen — Día 1")
+print("Resumen — Proyecto 1")
 print("=" * 55)
 print(f"Baseline mayoritaria (train completo): F1 micro = {f1_majority:.4f}")
 print(f"Baseline LightGBM (5-fold CV mean):    F1 micro = {cv_mean:.4f} ± {cv_std:.4f}")
