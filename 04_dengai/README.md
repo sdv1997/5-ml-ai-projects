@@ -4,7 +4,7 @@
 > **Tarea:** Predecir el número de casos semanales de dengue en San Juan (Puerto Rico) e Iquitos (Perú) a partir de variables climáticas y ambientales (temperatura, precipitación, vegetación NDVI, humedad…).
 > **Métrica:** MAE (↓ mejor).
 > **Submission:** CSV (`city, year, weekofyear, total_cases`).
-> **Estado:** practice abierta — leaderboard vivo, rank real.
+> **Resultado:** **MAE LB público 23.67 · rank 809 / ~17.390 (top ~5%)**, por debajo del benchmark oficial (~25). 7 iteraciones documentadas abajo.
 
 ## Por qué este proyecto
 
@@ -64,7 +64,7 @@ Con rolling-origin (4 folds expandiendo), el MAE offline ya es realista (≈ LB,
 - **En iq nada supera al seasonal-naive**: serie demasiado ruidosa (~18% semanas a 0), la señal clima→casos es marginal. Aceptarlo es lo honesto.
 - **NegBin GLM** (el enfoque del benchmark oficial) decepcionó: sin tuning y sin modelar autocorrelación temporal, se queda corto. Negativo documentado.
 - **Diversidad del portfolio:** el slot estrella deja de ser gradient boosting (ya estaba en el slot 1) y pasa a **SARIMAX**, familia estadística de series temporales. LightGBM queda como referencia comparativa, junto al seasonal-naive.
-- Estimación de LB pooled con esta config: **≈ 16** (vs ~24 de la submission 1). _Pendiente de confirmar submiteando._
+- Estimación de LB pooled con esta config: **≈ 16** (vs ~24 de la submission 1) — pero al subirla salió **30.89** (peor): la estimación de la CV no transfirió. Ver "Submission 2" abajo.
 
 ### Submission 2 — la CV mejor SIGUIÓ sin predecir el LB
 
