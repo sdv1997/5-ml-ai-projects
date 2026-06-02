@@ -28,9 +28,8 @@ try:
 except Exception:
     pass
 
-ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT / "data" / "04_dengai"
 OUT_DIR = Path(__file__).resolve().parent
+DATA_DIR = OUT_DIR / "data"
 
 FEATURES = [
     "ndvi_ne", "ndvi_nw", "ndvi_se", "ndvi_sw",

@@ -17,10 +17,12 @@ Primer problema de **regresión + serie temporal** del portfolio. Los slots 1–
 - [x] Features de **rolling** sobre drivers climáticos (humedad/temp/precip; el clima precede a los casos) + estacionalidad `weekofyear` (sin/cos). **Sin lags del target** (no disponibles en el test futuro).
 - [x] Baseline ([pipeline.py](pipeline.py)): seasonal-naive como referencia honesta → LightGBM L1 (objetivo MAE) por ciudad, clip≥0 + redondeo a entero.
 - [x] Iteración 2 ([pipeline.py](pipeline.py)): harness que **selecciona config por ciudad** en holdout temporal, barriendo objetivo (L1 / Poisson / Tweedie) × lags de clima × suavizado × blend con seasonal-naive.
-- [x] Iteración 3 ([compare_models.py](compare_models.py)): **validación rolling-origin** (4 orígenes) + comparación de 4 familias de modelo por ciudad (seasonal-naive, LightGBM, NegBin GLM, SARIMAX). Genera la submission con el mejor por ciudad.
-- [x] Iteración 4 ([model_lagopt.py](model_lagopt.py)): hipótesis = **sobreajuste por exceso de features**. Reduce a 5 drivers, **busca el lag óptimo por variable** (clima precede a casos), suaviza features y predicción, modelo simple. ([make_submission.py](make_submission.py) compone submissions por ciudad para aislar causas en el LB.)
-- [x] Iteración 5 ([ensemble.py](ensemble.py)): **ensemble por ciudad** (lgbm-small + NegBin + seasonal-naive) con pesos elegidos por rolling-origin. Ayuda en iq, no en sj.
-- [x] Iteración 6 ([autoreg.py](autoreg.py)): **autorregresión recursiva** con lags del propio target. **NEGATIVO** (sj 26.16 → 58.62): el error se acumula al realimentar predicciones en un horizonte de 260 semanas. La autocorrelación es real pero inutilizable en este test futuro.
+- [x] Iteración 3 — **validación rolling-origin** (4 orígenes) + comparación de 4 familias de modelo por ciudad (seasonal-naive, LightGBM, NegBin GLM, SARIMAX). Ver [experiments.py](experiments.py), bloque A.
+- [x] Iteración 4 — hipótesis = **sobreajuste por exceso de features**. Reduce a 5 drivers, **busca el lag óptimo por variable** (clima precede a casos), suaviza features y predicción, modelo simple. Es el modelo final → [pipeline.py](pipeline.py).
+- [x] Iteración 5 — **ensemble por ciudad** (lgbm + NegBin + seasonal-naive) con pesos por rolling-origin. Ayuda en iq, no en sj. Ver [experiments.py](experiments.py), bloque B.
+- [x] Iteración 6 — **autorregresión recursiva** con lags del propio target. **NEGATIVO** (sj 26.16 → 58.62): el error se acumula al realimentar predicciones en un horizonte de 260 semanas. La autocorrelación es real pero inutilizable en este test futuro. Ver [experiments.py](experiments.py), bloque C.
+
+**Estructura del proyecto:** [eda.py](eda.py) (exploración) · [pipeline.py](pipeline.py) (modelo final, reproduce la submission) · [experiments.py](experiments.py) (alternativas probadas y descartadas). Datos en `04_dengai/data/` (gitignored).
 
 ## Resultado
 
