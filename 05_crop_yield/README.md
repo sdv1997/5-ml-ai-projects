@@ -40,7 +40,29 @@ Validación **GroupKFold por año** (conservadora: predice un año no visto):
 
 - El modelo bate a predecir la media (1.61 vs 1.74). Mejora modesta — yield desde satélite es intrínsecamente ruidoso.
 - La CV por año es un **estrés** (el test real mezcla años) → el RMSE del leaderboard debería ser ≤ 1.61.
-- _LB público: pendiente de subir `submissions/submission.csv` a Zindi._
+
+### Submission 1 — gap CV→LB
+
+| | CV | LB private |
+|---|---|---|
+| v1 (media+QA, todas las calidades, GroupKFold) | 1.61 | **1.75** |
+
+El LB (1.75) ≈ baseline de la media → el modelo apenas generaliza al test. Mismo patrón que DengAI: la CV optimista.
+
+### Iteración 2 — ideas de la solución 4ª clasificada (CV ~1.59)
+
+Estudiando un notebook del **4º puesto**, adoptamos sus trucos:
+- **Filtro de calidad de etiqueta**: entrenar solo con `Quality ∈ {1,3}` (2977 → 1746 campos) — etiquetas más limpias generalizan mejor al test.
+- **MEDIANA del parche** por mes (robusta a nubes) en vez de media + máscara QA.
+- **SAVI** + **ratios red-edge** (B7/B5, B7/B6) además de NDVI/EVI.
+- **Clima de temporada de maíz** (meses 3–9: pr/tmmn/tmmx, media 4 años) + suelo ISRIC.
+- **KFold aleatorio 5-fold** (imita el LB; el test mezcla años) y **sin log-target** (gana a log: 1.583 vs 1.614).
+
+| | KFold aleatorio (≈LB) | GroupKFold-año |
+|---|---|---|
+| v3 (estilo 4º puesto) | **1.583** | 1.680 |
+
+- _Pendiente de subir a Zindi para confirmar si los trucos cierran el gap CV→LB._
 
 ## EDA — hallazgos
 
