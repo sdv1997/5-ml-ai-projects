@@ -19,12 +19,23 @@ Cierra el portfolio con un problema **geoespacial + satélite**, pero **ejecutab
 
 ## Plan
 
-- [ ] **EDA**: distribución del yield, nº de campos, qué son las 360 capas (bandas×tiempo), valores faltantes/nubes, rango temporal, distribución espacial de los campos.
-- [ ] **Feature engineering satélite** (la clave en CPU): por campo, agregar el parche 41×41 (media/percentiles enmascarando nubes) por banda y paso temporal; **índices de vegetación** (NDVI, EVI, NDWI); **fenología temporal** (máximos, integral de NDVI, pendientes, fecha de pico). Unir con suelo/clima.
-- [ ] **Validación cruzada espacial** (parcela/región-disjunta) para evitar *spatial leakage* — el primo geográfico del site-disjoint del slot 2.
-- [ ] Baseline: media → LightGBM regresión (objetivo acorde a RMSE) sobre las features tabulares.
-- [ ] Mejoras: selección de features, índices adicionales, blending; comparar con un baseline espacial (vecinos / kriging) si aporta.
-- [ ] Submission a Zindi (late) o reporte de RMSE en CV espacial.
+- [x] **EDA** ([eda.py](eda.py) → [eda.png](eda.png)): ver hallazgos abajo.
+- [ ] **Feature engineering satélite** (la clave en CPU): por campo, agregar el parche 41×41 (media/percentiles **enmascarando nubes con las bandas QA**) por banda y mes; **índices de vegetación** (NDVI, EVI, NDWI); **fenología temporal** (máximo de NDVI, integral, pendientes, mes de pico). Unir con suelo/clima de `fields_w_additional_info.csv`.
+- [ ] **Validación GroupKFold por año** (2016–2019) para una estimación honesta (no hay coordenadas → no se puede CV espacial).
+- [ ] Baseline: media → LightGBM regresión (acorde a RMSE) sobre las features tabulares.
+- [ ] Mejoras: selección de features, índices adicionales, manejo de la cola alta del yield.
+- [ ] Submission a Zindi (late) o reporte de RMSE en CV.
+
+## EDA — hallazgos
+
+- **2.977 campos train / 1.055 test.** `fields_w_additional_info.csv` cubre el 100% de ambos (suelo + clima).
+- **Yield**: media 3.17, std 1.74, rango 0–14.45; **sesgado a la derecha** (cola de valores altos).
+- **4 años** (2016: 1024, 2017: 1203, 2018: 181, 2019: 569) → validación **GroupKFold por año**.
+- `Quality` (1/2/3) = calidad de la *etiqueta*, no se correlaciona fuerte con el yield.
+- **Arrays (360,41,41) = 12 meses × 30 canales** (13 bandas Sentinel-2 + 3 QA + 14 de clima).
+- **NDVI estacional muy marcado** (pico meses 6–8) → la **fenología** es señal fuerte.
+- ⚠️ **Nubes**: los parches salen nubosos → imprescindible **enmascarar con bandas QA** al agregar.
+- ⚠️ **Sin coordenadas** → cae la idea de CV espacial; el ángulo nuevo del portfolio es el **feature engineering de series satélite** (fenología + índices + máscara de nubes).
 
 ## Hardware
 
