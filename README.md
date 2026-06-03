@@ -14,7 +14,7 @@ Cada carpeta tiene el código reproducible y el README con la historia completa.
 | [02](02_conser_vision/) | [Conser-vision](https://www.drivendata.org/competitions/87/competition-image-classification-wildlife-conservation/) — clasificación de fauna en cámaras trampa | DL Imagen | **Log-loss 0.8990 · rank 18 / 2.064 (top 0.9%)** |
 | [03](03_whats_up_docs/) | [What's Up, Docs?](https://www.drivendata.org/competitions/297/whats-up-docs/) — generación de abstracts de papers de ciencias sociales | NLP / LLM | **ROUGE-2 0.1398 · rank 9 / 495 (top 1.8%)** |
 | [04](04_dengai/) | [DengAI](https://www.drivendata.org/competitions/44/dengai-predicting-disease-spread/) — forecasting de casos semanales de dengue (San Juan / Iquitos) | Series temporales | **MAE 23.67 · rank 809 / 16.396 (top 4.9%)** |
-| 05 | _por definir — geoespacial (GIS), ejecutable en CPU_ | Geoespacial | _pendiente_ |
+| [05](05_crop_yield/) | [CGIAR Crop Yield](https://zindi.africa/competitions/cgiar-crop-yield-prediction-challenge) — predicción de rendimiento de cultivo desde Sentinel-2 | Geoespacial / Satélite (regresión) | _en progreso_ |
 
 ---
 
