@@ -20,11 +20,27 @@ Cierra el portfolio con un problema **geoespacial + satélite**, pero **ejecutab
 ## Plan
 
 - [x] **EDA** ([eda.py](eda.py) → [eda.png](eda.png)): ver hallazgos abajo.
-- [ ] **Feature engineering satélite** (la clave en CPU): por campo, agregar el parche 41×41 (media/percentiles **enmascarando nubes con las bandas QA**) por banda y mes; **índices de vegetación** (NDVI, EVI, NDWI); **fenología temporal** (máximo de NDVI, integral, pendientes, mes de pico). Unir con suelo/clima de `fields_w_additional_info.csv`.
-- [ ] **Validación GroupKFold por año** (2016–2019) para una estimación honesta (no hay coordenadas → no se puede CV espacial).
-- [ ] Baseline: media → LightGBM regresión (acorde a RMSE) sobre las features tabulares.
-- [ ] Mejoras: selección de features, índices adicionales, manejo de la cola alta del yield.
-- [ ] Submission a Zindi (late) o reporte de RMSE en CV.
+- [x] **Feature engineering satélite** ([pipeline.py](pipeline.py)): por campo y mes, media del parche 41×41 **enmascarando nubes con QA60** (bits 10/11); **NDVI/EVI/NDWI**; agregados temporales (mean/std/min/max) por señal + **fenología del NDVI** (mes de pico, integral, rango) + 12 NDVI mensuales + suelo ISRIC. **147 features.**
+- [x] **Baseline LightGBM** (objetivo RMSE) con **GroupKFold por año**: ver resultado.
+- [ ] Mejoras: KFold aleatorio (estima mejor el LB de años mezclados), añadir clima de `fields_w_additional_info`, selección de features, manejo de la cola alta del yield, percentiles del parche.
+- [ ] Submission a Zindi (late) → RMSE public LB.
+
+## Resultado
+
+Validación **GroupKFold por año** (conservadora: predice un año no visto):
+
+| año (fold) | RMSE |
+|---|---|
+| 2016 | 1.459 |
+| 2017 | 1.609 |
+| 2018 | 1.763 |
+| 2019 | 1.800 |
+| **OOF** | **1.608** |
+| baseline (media) | 1.742 |
+
+- El modelo bate a predecir la media (1.61 vs 1.74). Mejora modesta — yield desde satélite es intrínsecamente ruidoso.
+- La CV por año es un **estrés** (el test real mezcla años) → el RMSE del leaderboard debería ser ≤ 1.61.
+- _LB público: pendiente de subir `submissions/submission.csv` a Zindi._
 
 ## EDA — hallazgos
 
