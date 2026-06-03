@@ -23,3 +23,6 @@ __pycache__/
 
 # HF model cache (en /workspace)
 .cache/
+
+# Zips de datasets descargados
+*.zip

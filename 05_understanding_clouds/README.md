@@ -12,15 +12,23 @@ Primer problema de **segmentación densa** (predicción píxel a píxel) y prime
 
 ## Plan
 
-- [ ] EDA: tamaños de imagen, frecuencia de cada clase, solapamiento entre patrones (una imagen puede tener varios).
-- [ ] Utilidades de **RLE**: decodificar máscaras de train, codificar predicciones para la submission.
-- [ ] Baseline: U-Net con encoder preentrenado (`segmentation_models.pytorch`, p.ej. ResNet/EfficientNet) por clase.
-- [ ] Loss: combinación **BCE + Dice**. Resize agresivo (las imágenes son grandes; las máscaras son patrones gruesos, no detalle fino).
+- [x] **EDA** ([eda.py](eda.py) → [eda.png](eda.png)) + **utilidades RLE/Dice** ([rle.py](rle.py), con test de round-trip).
+- [ ] Baseline U-Net ([pipeline.py](pipeline.py)): encoder preentrenado (`segmentation_models.pytorch`), 4 canales sigmoid (multi-label), resize agresivo, loss BCE+Dice. **En RunPod (A5000).**
 - [ ] Post-proceso típico de esta competición: umbral por clase + **min-size** (descartar máscaras pequeñas) — fue clave en el leaderboard.
-- [ ] TTA (flips) y, si da tiempo, ensemble de encoders.
+- [ ] Two-stage: clasificador "¿está la clase?" para quitar falsos positivos.
+- [ ] TTA (flips) + ensemble de encoders. Late submission → Dice private LB.
 
-Corre en RunPod (RTX A5000).
+## EDA — hallazgos
+
+- **5.546 imágenes** de train, 3.698 de test. Multi-label: **media 2.13 clases/imagen**, todas tienen ≥1 (nunca vacía del todo).
+- Frecuencia por clase: **Sugar 67.6% · Gravel 53.0% · Fish 50.1% · Flower 42.6%** (equilibrado, sin clase rara).
+- Imágenes **2100×1400**. **Las máscaras son bloques rectangulares gruesos** (los anotadores marcaron cajas, no contornos) → se puede **reescalar muy agresivo** (p.ej. 384×576) sin perder señal; el reto no es el detalle fino sino *localizar* el patrón y *decidir si está*.
+- Implicación de diseño: importa más el **post-proceso** (umbral + min-size, decidir presencia de clase) que la precisión de contorno.
+
+## Hardware
+
+RunPod community cloud — RTX A5000 (igual que slots 2 y 3). El EDA y las utilidades RLE corren en local; el entrenamiento va en el pod.
 
 ## Resultado
 
-_Pendiente._
+_Pendiente — modelo en desarrollo._
