@@ -4,7 +4,7 @@ Proyecto 4 — DengAI: pipeline final
 
 Modelo final tras 6 iteraciones (ver experiments.py para las alternativas
 probadas y descartadas, y el README para la narrativa). Mejor resultado:
-MAE LB público 23.67 (por debajo del benchmark oficial ~25).
+MAE LB público 23.67.
 
 Receta ganadora — la clave fue ATACAR EL SOBREAJUSTE:
   - Un modelo por ciudad (sj e iq son casi otro problema).
@@ -14,7 +14,7 @@ Receta ganadora — la clave fue ATACAR EL SOBREAJUSTE:
   - Suavizado de features y de la predicción (el dengue responde a condiciones
     sostenidas, no al ruido semanal).
   - LightGBM regularizado con objetivo L1 (= métrica MAE). Clip>=0 + entero.
-  - Validación rolling-origin (varios orígenes temporales); CV aleatoria miente.
+  - Validación temporal por varios cortes (no aleatoria, que mentiría).
 
 Uso:    python 04_dengai/pipeline.py
 Salida: 04_dengai/submissions/submission.csv
@@ -145,7 +145,7 @@ def main():
 
         print(f"\n[{city}] lag óptimo (semanas): " +
               ", ".join(f"{d.split('_')[-1] if False else d}={L}" for d, L in lags.items()))
-        print(f"  MAE rolling-origin = {rolling_mae(tr_f, feats):.2f}")
+        print(f"  MAE (validación temporal) = {rolling_mae(tr_f, feats):.2f}")
 
         pred = smooth(np.clip(fit_lgbm(tr_f, feats).predict(te_f[feats]), 0, None), SMOOTH_PRED)
         s = te_f[["city", "year", "weekofyear"]].copy()
