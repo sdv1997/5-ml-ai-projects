@@ -32,7 +32,7 @@ Se modela cada ciudad por separado porque tienen escalas, estacionalidad e hist�
 | 1 | LightGBM con muchas features (~90) | 24.29 |
 | 2 | **LightGBM con pocas features + desfase del clima** | **23.67** ← mejor |
 
-**MAE 23.67 · rank 809 / 16.396 (top 4.9%)** — por debajo del benchmark oficial de la competición (~25).
+**MAE 23.67 · rank #809**
 
 ---
 

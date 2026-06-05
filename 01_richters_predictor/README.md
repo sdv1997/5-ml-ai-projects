@@ -10,7 +10,7 @@
 | | F1 micro |
 |---|---|
 | **Score público** | **0.7534** |
-| **Rank** | **55 / ~8.800** (top 0.6%) |
+| **Rank** | **#55** |
 | CV 5-fold (StratifiedKFold seed=42) | 0.7531 ± 0.0014 |
 
 5 submissions:

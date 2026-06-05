@@ -38,7 +38,7 @@ Prioridad intro → conclusión → resto. Truncado a `max_chars`.
 | 1 | Qwen2.5-3B-Instruct, max_chars=6000 | 0.1400 | 0.1258 | #12 |
 | 2 | Qwen2.5-7B-Instruct-AWQ, max_chars=24000 | **0.1549** | **0.1398** | **#9** |
 
-**Rank actual: #9 / 495**
+**Rank actual: #9**
 
 ### Análisis del gap CV → LB
 
